@@ -1,18 +1,16 @@
-xo
-==
+# xo
 
 Advanced tic-tac-toe game with offline mode
 
 Pure frontend offline version is available on [GitHub pages](http://nkbt.github.io/xo).
 
 
-Installation
-====
+#### Installation
 
 1. Install [Vagrant](http://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/)
-2. Add Ubuntu 13.04 i386 box:
+2. Add Ubuntu 12.04 i386 box:
 
-        vagrant box add raring32 http://cloud-images.ubuntu.com/vagrant/raring/current/raring-server-cloudimg-i386-vagrant-disk1.box
+        vagrant box add precise32 http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-i386-vagrant-disk1.box
 
 3. Add salt plugin:
 
@@ -30,8 +28,7 @@ Installation
 6. Go to [http://localhost:10080](http://localhost:10080)
 
 
-TODO
-====
+#### TODO
 
 - [x] Vagrant sandbox configuration (Node, Redis)
 - [x] Configure Node app dependencies (package.json)
