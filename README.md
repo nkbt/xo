@@ -33,11 +33,11 @@ Installation
 TODO
 ====
 
-- [x] Vagrant sandbox configuration (Node, Redis)
-- [x] Configure Node app dependencies (package.json)
-- [x] Automatically install NPM dependencies and run Node app
-- [ ] BUG: fix dead-end situation
-- [ ] FEATURE: rooms
-- [ ] FEATURE: backend state validation and sync
-- [ ] FEATURE: scores
-- [ ] FEATURE: leader board
+[x] Vagrant sandbox configuration (Node, Redis)
+[x] Configure Node app dependencies (package.json)
+[x] Automatically install NPM dependencies and run Node app
+[ ] BUG: fix dead-end situation
+[ ] FEATURE: rooms
+[ ] FEATURE: backend state validation and sync
+[ ] FEATURE: scores
+[ ] FEATURE: leader board
