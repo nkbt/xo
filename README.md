@@ -34,8 +34,8 @@ TODO
 ====
 
 - [x] Vagrant sandbox configuration (Node, Redis)
-- [ ] Configure Node app dependencies (package.json)
-- [ ] Automatically install NPM dependencies and run Node app (update Vagrant sandbox config)
+- [x] Configure Node app dependencies (package.json)
+- [x] Automatically install NPM dependencies and run Node app
 - [ ] BUG: fix dead-end situation
 - [ ] FEATURE: rooms
 - [ ] FEATURE: backend state validation and sync

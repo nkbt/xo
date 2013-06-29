@@ -1,0 +1,31 @@
+{
+    "name": "xo",
+    "description": "Advanced tic-tac-toe game with offline mode",
+    "version": "0.0.1",
+    "private": true,
+    "author": {
+        "name": "Nik Butenko",
+        "email": "nikita.butenko@gmail.com"
+    },
+    "contributors": [
+        {
+            "name": "Nik Butenko",
+            "email": "nikita.butenko@gmail.com"
+        }
+    ],
+    "scripts": {
+        "start": "supervisor --watch \".\" --extensions \"node|js|html|json\" app.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/nkbt/xo.git"
+    },
+    "dependencies": {
+        "gleam": "https://github.com/nkbt/gleam/tarball/master",
+        "puma": "https://github.com/nkbt/puma/tarball/master",
+        "async": "*",
+        "underscore": "*",
+        "redis": "*",
+        "socket.io": "*"
+    }
+}

@@ -2,7 +2,16 @@
 <head>
 <title>XO advanced</title>
 
+<script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
+    var socket = io.connect('http://localhost');
+    socket.on('ping', function (data) {
+        console.log(data);
+        setTimeout(function () {
+            socket.emit('get-ping', (new Date()).toJSON());
+        }, 20000);
+    });
+
     var matrix = [
         [8, 1, 6],
         [3, 5, 7],
@@ -158,7 +167,6 @@
 
             setCurrentCell(prefix, currentCell, currentPlayer);
         });
-
     }
 
 
