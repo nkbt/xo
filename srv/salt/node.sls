@@ -50,8 +50,9 @@ app-install:
       
 app-run:
   cmd.run:
-    - name: screen -dmS newscreen `nohup npm start > app.log &`
+    - name: screen -dmS newscreen nohup npm start
     - cwd: /vagrant/
+    - unless: "pgrep npm"
     - require:
       - pkg: nodejs
       - cmd: app-install
