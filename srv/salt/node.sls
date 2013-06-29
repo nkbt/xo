@@ -26,12 +26,14 @@ forever:
     - installed
     - require:
       - pkg: nodejs
+      - pkg: git
     
 supervisor:
   npm:
     - installed
     - require:
       - pkg: nodejs
+      - pkg: git
 
 #
 #
@@ -47,6 +49,7 @@ app-install:
     - cwd: /vagrant/
     - require:
       - pkg: nodejs
+      - pkg: git
       
 app-run:
   cmd.run:
@@ -55,4 +58,7 @@ app-run:
     - unless: "pgrep npm"
     - require:
       - pkg: nodejs
+      - pkg: screen
+      - pkg: redis-server
+      - npm: supervisor
       - cmd: app-install
