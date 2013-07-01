@@ -1,0 +1,227 @@
+<html>
+<head>
+<title>XO advanced</title>
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+	var socket = io.connect('http://localhost');
+	socket.on('ping', function (data) {
+		console.log(data);
+//		setTimeout(function () {
+//			socket.emit('get-ping', (new Date()).toJSON());
+//		}, 20000);
+	});
+
+	var matrix = [
+		[8, 1, 6],
+		[3, 5, 7],
+		[4, 9, 2]
+	];
+
+
+	function fire(element, eventName, data) {
+		var event = document.createEvent('HTMLEvents');
+		event.initEvent('dataavailable', true, true);
+		event.name = eventName;
+		event.data = data;
+		element.dispatchEvent(event);
+	}
+
+	function querySelectorUp(element, selector) {
+		if (element === document.body) {
+			return undefined;
+		}
+		var parent = element.parentNode;
+		while (parent !== document.body) {
+			var elements = parent.querySelectorAll(selector);
+			for (var i = 0; i < elements.length; i++) {
+				if (elements[i] === element) {
+					return element;
+				}
+			}
+
+			element = parent;
+			parent = parent.parentNode;
+		}
+		return undefined;
+
+	}
+
+	function on(element, eventName, selector, callback) {
+		element.addEventListener(eventName, function (event) {
+			var target = querySelectorUp(event.target, selector);
+			if (target !== undefined) {
+				callback(event, target, event.data);
+			}
+		}, false);
+	}
+
+	function onCustom(element, eventName, selector, callback) {
+		on(element, 'dataavailable', selector, function (event, target) {
+			if (eventName === event.name) {
+				callback(event, target, event.data);
+			}
+		});
+	}
+
+	function createField($container, $template, id) {
+		var $cell, v, h;
+
+		for (h = 0; h < 3; h++) {
+			for (v = 0; v < 3; v++) {
+
+				$cell = $template.cloneNode(true);
+				$cell.classList.remove('template');
+				$cell.id = id + '-' + matrix[h][v];
+				$container.appendChild($cell);
+
+				if (!$container.classList.contains('cell')) {
+					createField($cell, $template, $cell.id);
+				}
+			}
+
+		}
+
+	}
+
+	function equal(one, two) {
+		return one === two;
+	}
+
+	function isWinner(currentPlayerClass, $cell) {
+		if ($cell.className.match(/winner/)) {
+			console.log("$cell.className.match(/winner/)", $cell, $cell.className.match(/winner/));
+			return false;
+		}
+
+		var cells = Array.prototype.slice.apply(
+						document.querySelectorAll(".cell [id^='" + $cell.id + "']." + currentPlayerClass)
+				),
+				score = cells.reduce(function (acc, $subCell) {
+					console.log("$subCell", $subCell, parseInt($subCell.id.split('-').pop(), 10));
+					return acc + parseInt($subCell.id.split('-').pop(), 10);
+				}, 0);
+		console.log("cells", cells, 'score', score);
+		return equal(15, score);
+	}
+
+	function classAdd() {
+		var classList = Array.prototype.slice.apply(arguments),
+				$element = classList.shift();
+		classList.forEach($element.classList.add.bind($element.classList));
+	}
+
+	function classRemove() {
+		var classList = Array.prototype.slice.apply(arguments),
+				$element = classList.shift();
+		classList.forEach($element.classList.remove.bind($element.classList));
+	}
+
+	function classToggle() {
+		var classList = Array.prototype.slice.apply(arguments),
+				$element = classList.shift();
+		classList.forEach($element.classList.toggle.bind($element.classList));
+	}
+
+	function setCurrentCell(prefix, currentCell, currentPlayer) {
+		var $currentCell = document.getElementById([prefix, currentCell].join('-')),
+				currentPlayerClass = currentPlayer ? 'x' : 'o';
+		Array.prototype.slice.apply(document.querySelectorAll(".current")).forEach(function ($item) {
+			classRemove($item, 'current', 'x', 'o');
+		});
+		classAdd($currentCell, 'current', currentPlayerClass);
+	}
+
+
+	function onLoad() {
+		// true = x, false = o
+		var currentPlayer = Math.round(Math.random()),
+				currentCell,
+				$main = document.querySelector('#main');
+
+		classAdd($main, 'current', currentPlayer ? 'x' : 'o');
+
+		createField($main, document.querySelector('.template.cell'), 'cell');
+
+		on(document.body, 'click', '.cell .cell:not(.x):not(.o)', function (event, $subCell) {
+			var cellData = $subCell.id.split('-'),
+					prefix = cellData.shift(),
+					cellId = cellData.shift(),
+					subCellId = cellData.shift(),
+					$cell,
+					currentPlayerClass = currentPlayer ? 'x' : 'o';
+			if (currentCell && cellId !== currentCell) {
+				return;
+			}
+
+			$subCell.classList.add(currentPlayerClass);
+
+			$cell = document.getElementById([prefix, cellId].join('-'));
+			if (isWinner(currentPlayerClass, $cell)) {
+				console.log("winner", currentPlayerClass, $cell);
+				classAdd($cell, ['winner', currentPlayerClass].join('-'));
+			}
+
+			currentPlayer = !currentPlayer;
+			currentCell = subCellId;
+
+			setCurrentCell(prefix, currentCell, currentPlayer);
+		});
+	}
+
+
+</script>
+<style type="text/css">
+	#main { min-width: 63em; font-size: 8px; float: left; }
+	.template { display: none; }
+	.cell {
+		float: left;
+		width: 21em;
+		height: 21em;
+		transition: all ease 500ms;
+		border-radius: 1em;
+	}
+	.cell .cell {
+		width: 7em;
+		height: 7em;
+		/*background: rgba(255, 0, 0, 0.05);*/
+	}
+	.cell:nth-child(3n+1) {
+		clear: left;
+	}
+	.cell:nth-child(2n+1) {
+		background: rgba(0, 0, 0, 0.05);
+	}
+	.cell:nth-child(2n) {
+		background: rgba(0, 0, 0, 0.1);
+	}
+
+	.cell:hover {
+		background: rgba(0, 0, 0, 0.3);
+	}
+
+	.cell .cell.x { background: rgba(150, 0, 0, 0.8); }
+	.cell .cell.o { background: rgba(0, 0, 0, 0.8); }
+
+	.current {
+		outline-style: solid;
+		outline-width: thick;
+	}
+	.current.x {
+		outline-color: rgba(150, 0, 0, 0.8);
+	}
+	.current.o {
+		outline-color: rgba(0, 0, 0, 0.8);
+	}
+
+	.cell.winner-x { background: rgba(150, 0, 0, 0.8); }
+	.cell.winner-o { background: rgba(0, 0, 0, 0.8); }
+</style>
+</head>
+<body onload="onLoad();">
+
+<div id="main"></div>
+<div class="cell template"></div>
+
+</body>
+</html>
