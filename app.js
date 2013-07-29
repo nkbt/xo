@@ -1,90 +1,77 @@
 "use strict";
 /**
  * Initialize Gleam
- * 
+ *
  * @type {gleam}
  */
 var gleam = require('gleam');
 gleam.setModelRoot(__dirname + '/models');
 
+//
+///**
+// * Create HTTP server on port 3000
+// */
+//var http = require('http');
+//var server = http.createServer(handleRequest);
+//server.listen(3000);
+//
+//
+///**
+// * Initialize Socket.IO
+// */
+//var socketIo = require('socket.io');
+//var io = socketIo.listen(server);
+//io.sockets.on('connection', function (socket) {
+//	socket.emit('ping', (new Date()).toJSON());
+//	socket.on('get-ping', function () {
+//		socket.emit('ping', (new Date()).toJSON());
+//	})
+//});
+
 
 /**
- * Initialize Puma
- * 
- * @type {puma}
+ * Module dependencies.
  */
-var puma = require('puma');
-puma.setModuleRoot(__dirname + '/modules');
-puma.setResponseDecorators({
-	response: function (response) {
-		return gleam.entity('response', response);
-	},
-	payload: function (payload) {
-		return gleam.entity('payload', payload);
-	},
-	message: function (message) {
-		return gleam.entity('message', message);
-	}
-});
 
-
-/**
- * Emulate some Express.js methods
- *
- * @param {Object} req
- * @param {Object} res
- * @param {Function} callback
- */
-var wrapReqRes = function (req, res, callback) {
-	res.status = function (code) {
-		this.statusCode = code;
-		return this;
-	}.bind(res);
-	res.send = function () {
-		return this.end.apply(this, Array.prototype.slice.call(arguments));
-	}.bind(res);
-	res.set = function () {
-		return this.setHeader.apply(this, Array.prototype.slice.call(arguments));
-	}.bind(res);
-	callback(null, req, res);
-};
-
-/**
- * @param {Object} req
- * @param {Object} res
- */
-var async = require('async');
-var handleRequest = function (req, res) {
-	return async.waterfall([
-		async.apply(wrapReqRes, req, res),
-		puma.bootstrapMiddleware(__dirname + '/public', 'index.html'),
-		async.apply(puma.routeDefault, req, res),
-		function (error) {
-			console.log("error", arguments);
-			return puma.errorHandlerMiddleware(error, req, res)
+var express = require('express'),
+	app = express(),
+	config = {
+		responseDecorator: function (response) {
+			return gleam.entity('response', response);
 		}
-	]);
-};
+	},
+	api = require('./app/api')(config),
+	staticBootstrap = require('static-bootstrap');
 
+// Config
+app.use(express.logger('dev'));
+app.use(express.cookieParser());
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(express.static(__dirname + '/public'));
 
-/**
- * Create HTTP server on port 3000
- */
-var http = require('http');
-var server = http.createServer(handleRequest);
-server.listen(3000);
-
-
-/**
- * Initialize Socket.IO
- */
-var socketIo = require('socket.io');
-var io = socketIo.listen(server);
-io.sockets.on('connection', function (socket) {
-	socket.emit('ping', (new Date()).toJSON());
-	socket.on('get-ping', function () {
-		socket.emit('ping', (new Date()).toJSON());
-	})
+app.use(staticBootstrap(__dirname + '/public', 'bootstrap.html'));
+app.use(function (error, req, res, next) {
+	req.error = error;
+	console.log("error", error);
+	api('error', 'error')(req, res);
 });
 
 
+// General
+
+app.get('/', api('index', 'index'));
+
+// User
+
+app.all('/rooms', api('room', 'index'));
+app.get('/room/:id', api('room', 'item'));
+app.get('/room/:id/add', api('room', 'add'));
+app.get('/room/:id/edit', api('room', 'edit'));
+app.get('/room/:id/delete', api('room', 'delete'));
+app.put('/room/:id/add', api('room', 'update'));
+app.put('/room/:id/edit', api('room', 'update'));
+app.put('/room/:id/delete', api('room', 'update'));
+
+app.listen(3000);
+console.log('Express app started on port 3000');

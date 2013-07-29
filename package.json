@@ -22,7 +22,8 @@
 	},
 	"dependencies": {
 		"gleam": "https://github.com/nkbt/gleam/tarball/master",
-		"puma": "https://github.com/nkbt/puma/tarball/master",
+		"static-bootstrap": "https://github.com/nkbt/static-bootstrap/tarball/master",
+		"express": "*",
 		"async": "*",
 		"underscore": "*",
 		"redis": "*",
