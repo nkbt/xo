@@ -27,6 +27,6 @@
 		"async": "*",
 		"underscore": "*",
 		"redis": "*",
-		"socket.io": "*"
+		"socket.io": ">=1.7.1"
 	}
 }
