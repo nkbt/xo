@@ -23,7 +23,7 @@
 	"dependencies": {
 		"gleam": "https://github.com/nkbt/gleam/tarball/master",
 		"static-bootstrap": "https://github.com/nkbt/static-bootstrap/tarball/master",
-		"express": "*",
+		"express": ">=4.14.1",
 		"async": "*",
 		"underscore": "*",
 		"redis": "*",
