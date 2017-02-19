@@ -24,7 +24,7 @@
 		"gleam": "https://github.com/nkbt/gleam/tarball/master",
 		"static-bootstrap": "https://github.com/nkbt/static-bootstrap/tarball/master",
 		"express": "*",
-		"async": "*",
+		"async": ">=2.1.5",
 		"underscore": "*",
 		"redis": "*",
 		"socket.io": "*"
