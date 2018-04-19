@@ -25,7 +25,7 @@
 		"static-bootstrap": "https://github.com/nkbt/static-bootstrap/tarball/master",
 		"express": "*",
 		"async": "*",
-		"underscore": "*",
+		"underscore": ">=1.9.0",
 		"redis": "*",
 		"socket.io": "*"
 	}
